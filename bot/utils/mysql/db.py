@@ -226,6 +226,25 @@ async def get_lessons_current_date(teacher_id, current_date):
             return False
 
 
+async def get_lessons_week(teacher_id, start_date, end_date):
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("SELECT s.user_id, s.name, l.lesson_date, l.price "
+                          "FROM lessons AS l "
+                          "JOIN teachers AS t ON l.teacher_id = t.id "
+                          "JOIN students AS s ON l.student_id = s.id "
+                          "WHERE DATE(lesson_date) BETWEEN %s AND %s AND t.user_id = %s "
+                          "ORDER BY DATE(lesson_date), TIME(lesson_date) ASC",
+                          (start_date, end_date, teacher_id))
+        await con.commit()
+
+        if cur.rowcount > 0:
+            lessons_info = await cur.fetchall()
+            return lessons_info
+        else:
+            return False
+
+
 async def check_lesson_exists(student_id, teacher_id, week_day, lesson_time):
 
 

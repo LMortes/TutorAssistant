@@ -6,6 +6,7 @@ from .teacher.manage_student import dp
 from .teacher.add_new_lesson import dp
 from .teacher.schedule_today import dp
 from .teacher.change_student_info import dp
+from .teacher.schedule_week import dp
 from .start import dp
 
 
