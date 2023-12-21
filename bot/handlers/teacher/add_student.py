@@ -94,8 +94,13 @@ async def check_id_student(message: types.Message, state: FSMContext):
     if int(student_id) < 0:
         await message.delete()
         return await message.answer('❗️ Неверный ввод. ID пользователя не может быть отрицательным.')
+
+    student_id_exists = await db.get_student_info(student_id)
+    if student_id_exists != False:
+        await message.delete()
+        return await message.answer('❗️ Неверный ввод. Ученик с таким ID уже есть в базе данных.')
+
     # Запоминаем результат
-    print(student_id)
     await state.update_data(user_id=student_id)
 
     # Удаляем предыдущие сообщения и изменяем главное.

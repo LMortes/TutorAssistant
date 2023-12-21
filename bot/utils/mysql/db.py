@@ -224,3 +224,118 @@ async def get_lessons_current_date(teacher_id, current_date):
             return lessons_info
         else:
             return False
+
+
+async def check_lesson_exists(student_id, teacher_id, week_day, lesson_time):
+
+
+    # 1 - Воскресенье,  а по коду 6 - Воскресенье, поэтому форматируем
+    if week_day == 0:
+        week_day = 2
+    elif week_day == 1:
+        week_day = 3
+    elif week_day == 2:
+        week_day = 4
+    elif week_day == 3:
+        week_day = 5
+    elif week_day == 4:
+        week_day = 6
+    elif week_day == 5:
+        week_day = 7
+    elif week_day == 6:
+        week_day = 1
+
+    lesson_time = f'{lesson_time}:00'
+
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("SELECT l.id FROM lessons AS l JOIN students AS s ON l.student_id = s.id JOIN teachers AS t ON l.teacher_id = t.id "
+                          "WHERE DAYOFWEEK(lesson_date) = %s AND TIME(lesson_date) = %s AND s.user_id = %s AND t.user_id = %s;", (week_day, lesson_time, student_id, teacher_id))
+        await con.commit()
+        if cur.rowcount > 0:
+            return True
+        else:
+            return False
+
+
+
+#################################### функции для изменения информации об ученике ############################################################
+
+async def change_student_id(student_id, new_student_id):
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("UPDATE `students` SET `user_id`= %s WHERE user_id = %s", (new_student_id, student_id))
+        await con.commit()
+
+
+async def change_student_name(student_id, new_student_name):
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("UPDATE `students` SET `name`= %s WHERE user_id = %s", (new_student_name, student_id))
+        await con.commit()
+
+
+async def change_student_subject(student_id, new_subject):
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("UPDATE `students` SET `subject`= %s WHERE user_id = %s", (new_subject, student_id))
+        await con.commit()
+
+
+async def change_student_class(student_id, new_class_student):
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("UPDATE `students` SET `class`= %s WHERE user_id = %s", (new_class_student, student_id))
+        await con.commit()
+
+
+async def change_student_purpose(student_id, new_purpose):
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("UPDATE `students` SET `purpose`= %s WHERE user_id = %s", (new_purpose, student_id))
+        await con.commit()
+
+
+async def change_student_price(student_id, new_price):
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("UPDATE `students` SET `price`= %s WHERE user_id = %s", (new_price, student_id))
+        await con.commit()
+
+
+async def change_student_transfer(student_id, new_transfer):
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("UPDATE `students` SET `transfer`= %s WHERE user_id = %s", (new_transfer, student_id))
+        await con.commit()
+
+async def change_student_phone(student_id, new_phone):
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("UPDATE `students` SET `phone`= %s WHERE user_id = %s", (new_phone, student_id))
+        await con.commit()
+
+async def change_student_platform(student_id, new_platform):
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("UPDATE `students` SET `platform`= %s WHERE user_id = %s", (new_platform, student_id))
+        await con.commit()
+
+
+
+async def change_student_nick(student_id, new_nick):
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("UPDATE `students` SET `platform_nick`= %s WHERE user_id = %s", (new_nick, student_id))
+        await con.commit()
+
+
+async def change_student_timezone(student_id, new_timezone):
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("UPDATE `students` SET `timezone`= %s WHERE user_id = %s", (new_timezone, student_id))
+        await con.commit()
+
+
+
+#############################################################################################################################################

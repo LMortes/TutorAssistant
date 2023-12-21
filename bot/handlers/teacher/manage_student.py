@@ -18,11 +18,14 @@ from bot.utils.other.parse_registration_date import parse_registration_date
 
 @dp.callback_query_handler(lambda callback: callback.data.startswith('manage_student_back_'))
 async def manage_student_callback_back(callback: types.CallbackQuery):
-    student_id = callback.data[20:]
-    info_message = await generate_info_student(student_id)
+    try:
+        student_id = callback.data[20:]
+        info_message = await generate_info_student(student_id)
 
-    await bot.edit_message_text(info_message, callback.message.chat.id, callback.message.message_id,
-                                reply_markup=await ikb.ikb_student_info(student_id))
+        await bot.edit_message_text(info_message, callback.message.chat.id, callback.message.message_id,
+                                    reply_markup=await ikb.ikb_student_info(student_id))
+    except:
+        await callback.answer()
 
 
 @dp.callback_query_handler(lambda callback: callback.data.startswith('manage_student_'))

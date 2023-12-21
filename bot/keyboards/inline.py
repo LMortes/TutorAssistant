@@ -106,6 +106,17 @@ async def select_class_student_keyboard():
     return ikb_select_class_student
 
 
+async def select_class_student_by_change_keyboard():
+    ikb_select_class_student = InlineKeyboardMarkup(row_width=4)
+    for i in range(1, 12):
+        ikb_class_button = InlineKeyboardButton(text=f'{i}', callback_data=f'select_class_student_change_{i}')
+        ikb_select_class_student.insert(ikb_class_button)
+
+    ikb_change_student_close = InlineKeyboardButton(text='Отмена', callback_data='change_student_info_close_option')
+    ikb_select_class_student.add(ikb_change_student_close)
+    return ikb_select_class_student
+
+
 async def select_week_day_for_lesson():
     ikb_select_week_day = InlineKeyboardMarkup(row_width=7)
 
@@ -140,7 +151,7 @@ async def ikb_manage_student_keyboard(student_id):
     ikb_manage_student = InlineKeyboardMarkup()
 
     ikb_manage_student_button_add_lesson = InlineKeyboardButton(text='Добавить урок', callback_data=f'add_new_lesson_{student_id}')
-    ikb_manage_student_button_change_info = InlineKeyboardButton(text='♻️ Изменить информацию', callback_data='change_student_info')
+    ikb_manage_student_button_change_info = InlineKeyboardButton(text='Изменить информацию', callback_data=f'change_student_info_{student_id}')
     ikb_manage_student_button_lessons_list = InlineKeyboardButton(text='Расписание уроков', callback_data=f'schedule_current_student_{student_id}')
     ikb_manage_student_button_back = InlineKeyboardButton(text='⬅️ Назад', callback_data=f'manage_student_back_{student_id}')
 
@@ -158,5 +169,25 @@ async def ikb_back_button(student_id):
 
     return ikb_back
 
+
+async def change_student_info(student_id):
+    change_student_info_ikb = InlineKeyboardMarkup(row_width=3)
+
+    change_student_info_id = InlineKeyboardButton(text='ID', callback_data=f'student_info_change_id_{student_id}')
+    change_student_info_name = InlineKeyboardButton(text='Имя', callback_data=f'student_info_change_name_{student_id}')
+    change_student_info_subject = InlineKeyboardButton(text='Предмет', callback_data=f'student_info_change_subject_{student_id}')
+    change_student_info_class = InlineKeyboardButton(text='Класс', callback_data=f'student_info_change_class_{student_id}')
+    change_student_info_purpose = InlineKeyboardButton(text='Цель', callback_data=f'student_info_change_purpose_{student_id}')
+    change_student_info_price = InlineKeyboardButton(text='Цена', callback_data=f'student_info_change_price_{student_id}')
+    change_student_info_transfer = InlineKeyboardButton(text='Трансфер', callback_data=f'student_info_change_transfer_{student_id}')
+    change_student_info_phone = InlineKeyboardButton(text='Телефон', callback_data=f'student_info_change_phone_{student_id}')
+    change_student_info_platform = InlineKeyboardButton(text='Платформа', callback_data=f'student_info_change_platform_{student_id}')
+    change_student_info_nick = InlineKeyboardButton(text='Ник', callback_data=f'student_info_change_nick_{student_id}')
+    change_student_info_timezone = InlineKeyboardButton(text='ЧП', callback_data=f'student_info_change_timezone_{student_id}')
+    change_student_info_back = InlineKeyboardButton(text='⬅️ Назад', callback_data=f'manage_student_back_{student_id}')
+
+    change_student_info_ikb.add(change_student_info_id, change_student_info_name, change_student_info_subject, change_student_info_class, change_student_info_purpose, change_student_info_price, change_student_info_transfer, change_student_info_phone, change_student_info_platform, change_student_info_nick, change_student_info_timezone)
+    change_student_info_ikb.add(change_student_info_back)
+    return change_student_info_ikb
 
 

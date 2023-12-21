@@ -1,4 +1,5 @@
 import re
+import stat
 
 from aiogram import types
 from aiogram.dispatcher import FSMContext
@@ -122,6 +123,15 @@ async def add_lesson_time_handler(message: types.Message, state: FSMContext):
         lesson_minute = (message.text.split(':'))[1]
 
         lesson_time = f'{lesson_hour}:{lesson_minute}'
+
+        data_lesson = await state.get_data()
+        week_day = data_lesson.get("week_day")
+        week_day_info = data_lesson.get("week_day_info")
+        student_id = data_lesson.get("student_id")
+        teacher_id = data_lesson.get("teacher_id")
+        lesson_is_exists = await db.check_lesson_exists(student_id, teacher_id, week_day_info, lesson_time)
+        if lesson_is_exists:
+            return await message.answer('❗️ У данного ученика на этот день недели и время уже есть урок.')
         await state.update_data(lesson_time=lesson_time)
 
         # Добываем ид предыдущих сообщений для последующего удаления
