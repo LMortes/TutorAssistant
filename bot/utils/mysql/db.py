@@ -161,7 +161,7 @@ async def generate_lessons_for_weekday(teacher_id, student_id, week_day, lesson_
     lesson_minute = int((lesson_time.split(':'))[1])
 
     current_date = datetime.datetime.now()
-    current_weekday = current_date.weekday()
+    current_year = current_date.year
     schedule_time = ''
     async with con.cursor() as cur:
         await cur.execute("SELECT id, price, teacher_id FROM students WHERE user_id = %s", student_id)
@@ -173,13 +173,27 @@ async def generate_lessons_for_weekday(teacher_id, student_id, week_day, lesson_
             teacher_id = student_info[2]
 
     async with con.cursor() as cur:
-        while current_date.month == datetime.datetime.now().month:
+        while current_date.year == current_year:
             if current_date.weekday() == week_day:
                 schedule_time = (current_date.replace(hour=lesson_hour, minute=lesson_minute, second=0, microsecond=0)).strftime('%Y-%m-%d %H:%M:%S')
 
                 await cur.execute("INSERT INTO lessons(`teacher_id`, `student_id`, `lesson_date`, `price`) VALUES (%s,%s,%s,%s)", (teacher_id, student_id, schedule_time, price))
                 await con.commit()
             current_date += datetime.timedelta(days=1)
+
+
+    ################# На месяц
+    # while current_date.month == datetime.datetime.now().month:
+    #     if current_date.weekday() == week_day:
+    #         schedule_time = (
+    #             current_date.replace(hour=lesson_hour, minute=lesson_minute, second=0, microsecond=0)).strftime(
+    #             '%Y-%m-%d %H:%M:%S')
+    #
+    #         await cur.execute(
+    #             "INSERT INTO lessons(`teacher_id`, `student_id`, `lesson_date`, `price`) VALUES (%s,%s,%s,%s)",
+    #             (teacher_id, student_id, schedule_time, price))
+    #         await con.commit()
+    #     current_date += datetime.timedelta(days=1)
 
     ################### До конца года
     # con = await connection(loop)
@@ -355,6 +369,60 @@ async def change_student_timezone(student_id, new_timezone):
         await cur.execute("UPDATE `students` SET `timezone`= %s WHERE user_id = %s", (new_timezone, student_id))
         await con.commit()
 
+async def get_count_active_students_for_teacher(id):
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("SELECT COUNT(id) FROM students WHERE teacher_id = %s AND archiv = 0", id)
+        await con.commit()
 
+        if cur.rowcount > 0:
+            count_students = await cur.fetchone()
+            return count_students[0]
+        else:
+            return False
+        
+
+async def get_count_all_students_for_teacher(id):
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("SELECT COUNT(id) FROM students WHERE teacher_id = %s", id)
+        await con.commit()
+        if cur.rowcount > 0:
+            count_students_all = await cur.fetchone()
+            return count_students_all[0]
+        else:
+            return False
 
 #############################################################################################################################################
+        
+
+
+async def get_mounth_price_for_teacher(id):
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("SELECT SUM(price) AS total_price \
+                            FROM lessons \
+                            WHERE lesson_date >= DATE_FORMAT(NOW(), '%%Y-%%m-01') \
+                            AND lesson_date < DATE_ADD(DATE_FORMAT(NOW(), '%%Y-%%m-01'), INTERVAL 1 MONTH) \
+                            AND teacher_id = %s", id)
+        await con.commit()
+
+        if cur.rowcount > 0:
+            mounth_price = await cur.fetchone()
+            return mounth_price[0]
+        else:
+            return False
+        
+
+async def get_count_lessons_for_teacher(id, status):
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("SELECT COUNT(id) FROM lessons WHERE status = %s AND teacher_id = %s", (status, id))
+        await con.commit()
+
+        if cur.rowcount > 0:
+            count_success_lessons = await cur.fetchone()
+            return count_success_lessons[0]
+        else:
+            return False
+        
