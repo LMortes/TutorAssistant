@@ -289,6 +289,38 @@ async def check_lesson_exists(student_id, teacher_id, week_day, lesson_time):
             return True
         else:
             return False
+        
+# Находит уроки у другого ученика на тоже время
+async def check_lesson_exists_other_student(teacher_id, week_day, lesson_time):
+
+
+    # 1 - Воскресенье,  а по коду 6 - Воскресенье, поэтому форматируем
+    if week_day == 0:
+        week_day = 2
+    elif week_day == 1:
+        week_day = 3
+    elif week_day == 2:
+        week_day = 4
+    elif week_day == 3:
+        week_day = 5
+    elif week_day == 4:
+        week_day = 6
+    elif week_day == 5:
+        week_day = 7
+    elif week_day == 6:
+        week_day = 1
+
+    lesson_time = f'{lesson_time}:00'
+
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("SELECT l.id FROM lessons AS l JOIN teachers AS t ON l.teacher_id = t.id "
+                          "WHERE DAYOFWEEK(lesson_date) = %s AND TIME(lesson_date) = %s AND t.user_id = %s;", (week_day, lesson_time, teacher_id))
+        await con.commit()
+        if cur.rowcount > 0:
+            return True
+        else:
+            return False
 
 
 

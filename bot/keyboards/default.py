@@ -9,7 +9,7 @@ async def ikb_menu_teacher(user_id):
     ikb_menu_teacher_button_current_week = KeyboardButton('🗓 Раписание на неделю')
     ikb_menu_teacher_button_profile = KeyboardButton('📊 Профиль')
     ikb_menu_teacher_button_list_students = KeyboardButton('👨‍🎓Список учеников')
-    ikb_menu_teacher_button_statistics = KeyboardButton(text='ℹ️ Статистика')
+    ikb_menu_teacher_button_statistics = KeyboardButton(text='⚙️ Настройки')
     ikb_menu_teacher_button_add_teacher = KeyboardButton(text='👨‍🏫 Добавить репетитора')
     ikb_menu_teacher_button_list_teachers = KeyboardButton(text='🗓 Список репетиторов')
 

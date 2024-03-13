@@ -51,7 +51,7 @@ async def ikb_student_info(student_id):
 async def generate_keyboard_add_student(student_info):
     ikb_add_student = InlineKeyboardMarkup(row_width=2)
 
-    ikb_user_id_button = InlineKeyboardButton(text=f'{"🔴" if student_info["user_id"] is None else "✅"} ID', callback_data='add_student_id')
+    ikb_user_id_button = InlineKeyboardButton(text=f'{"" if student_info["user_id"] is None else "✅"} ID', callback_data='add_student_id')
     ikb_name_button = InlineKeyboardButton(text=f'{"🔴" if student_info["name"] is None else "✅"} Имя ученика', callback_data='add_student_name')
     ikb_subject_button = InlineKeyboardButton(text=f'{"🔴" if student_info["subject"] is None else "✅"} Предмет', callback_data='add_student_subject')
     ikb_class_button = InlineKeyboardButton(text=f'{"🔴" if student_info["class_student"] is None else "✅"} Класс', callback_data='add_student_class')

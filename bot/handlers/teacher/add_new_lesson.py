@@ -131,7 +131,12 @@ async def add_lesson_time_handler(message: types.Message, state: FSMContext):
         teacher_id = data_lesson.get("teacher_id")
         lesson_is_exists = await db.check_lesson_exists(student_id, teacher_id, week_day_info, lesson_time)
         if lesson_is_exists:
-            return await message.answer('❗️ У данного ученика на этот день недели и время уже есть урок.')
+            return await message.answer('❗️ У данного ученика на этот день недели и время уже есть урок.') 
+        
+        lesson_is_exists_other_student = await db.check_lesson_exists_other_student(teacher_id, week_day_info, lesson_time)
+        if lesson_is_exists_other_student:
+            return await message.answer('❗️ У вас уже есть ученик на ту же дату и на то же время.')
+        
         await state.update_data(lesson_time=lesson_time)
 
         # Добываем ид предыдущих сообщений для последующего удаления

@@ -1,3 +1,4 @@
+import random
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
@@ -66,7 +67,7 @@ async def delete_and_edit_message_add_student(message, state):
 async def add_student_handler(message: types.Message, state: FSMContext):
     await state.set_state(AddStudent.add_student_state)
     await state.update_data(timezone='+0', teacher_id=message.from_user.id,
-                            transfer=None, phone=None, platform=None, platform_nick=None)
+                            transfer=None, phone=None, platform=None, platform_nick=None, user_id=None)
     student_info = await get_info_student(state)
     info_message = await generate_info_student_message(student_info)
     main_message = await message.answer(f'{info_message}',
@@ -229,7 +230,7 @@ async def add_student_callback(callback: types.CallbackQuery, state: FSMContext)
         callback_message = await callback.message.answer(
             'Напиши ID ученика в телеграме. Узнать его можно переслав любое сообщение в бота - @username_to_id_bot.\n'
             'Или просто попросить ученика чтобы он написал в этого бота и отправил тебе свой ID\n\n'
-            'Если ученика нет в телеграмм и ты хочешь просто добавить его к себе, введи 0',
+            'Если ученика нет в телеграмм и ты хочешь просто добавить его к себе, то ничего не вводи',
             reply_markup=types.InlineKeyboardMarkup(inline_keyboard=[
                 [
                     types.InlineKeyboardButton(text='Отмена', callback_data='close_option')
@@ -367,8 +368,7 @@ async def add_student_callback(callback: types.CallbackQuery, state: FSMContext)
 
     elif message_callback == 'continue':
         info_students = await get_info_student(state)
-        if (info_students["user_id"] is not None) \
-                and (info_students["name"] is not None) \
+        if (info_students["name"] is not None) \
                 and (info_students["subject"] is not None) \
                 and (info_students["class_student"] is not None) \
                 and (info_students["purpose"] is not None) \
@@ -386,7 +386,15 @@ async def add_student_callback(callback: types.CallbackQuery, state: FSMContext)
 async def confirm_add_student_callback(callback: types.CallbackQuery, state: FSMContext):
     if callback.data[20:] == 'accept':
         info_student = await state.get_data()
-        print(info_student["user_id"], '123123')
+        student_id = info_student["user_id"]
+        # Если репетитор не ввел id ученика, то будет генерироваться новый id ученика
+        if student_id == None:
+            random_student_id_exists = True
+            while random_student_id_exists != False:
+                random_student_id = random.randint(1000, 9999)
+                random_student_id_exists = await db.get_student_info(random_student_id)
+            info_student["user_id"] = random_student_id
+
         is_add_student = await db.add_new_student(info_student)
         if is_add_student:
             await callback.message.delete()
