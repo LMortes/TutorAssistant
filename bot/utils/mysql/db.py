@@ -225,7 +225,7 @@ async def get_lesson_dates_current_student(student_id):
 async def get_lessons_current_date(teacher_id, current_date):
     con = await connection(loop)
     async with con.cursor() as cur:
-        await cur.execute("SELECT s.user_id, s.name, l.lesson_date, l.price "
+        await cur.execute("SELECT s.user_id, s.name, l.lesson_date, l.price, l.status "
                           "FROM lessons AS l "
                           "JOIN teachers AS t ON l.teacher_id = t.id "
                           "JOIN students AS s ON l.student_id = s.id "

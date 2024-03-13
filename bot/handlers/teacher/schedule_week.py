@@ -28,10 +28,20 @@ async def schedule_today_and_next_six_days_handler(message: types.Message):
             schedule_lesson = ''
             count_rubles = 0
 
+            # for lesson in lessons_info:
+            #     schedule_lesson += f'{lesson[2].strftime("%H:%M")}     {lesson[1]}    {lesson[3]} ₽\n'
+            #     count_rubles += int(lesson[3])
+            
             for lesson in lessons_info:
-                schedule_lesson += f'{lesson[2].strftime("%H:%M")}     {lesson[1]}    {lesson[3]} ₽\n'
+                if lesson[4] == 3:
+                    schedule_lesson += f'<blockquote>{lesson[2].strftime("%H:%M")}     {lesson[1]}    {lesson[3]} ₽</blockquote>\n'
+                elif lesson[4] == 4:
+                    schedule_lesson += f'<s>{lesson[2].strftime("%H:%M")}     {lesson[1]}    {lesson[3]} ₽</s>\n'
+                    count_rubles -= int(lesson[3])
+                else:
+                    schedule_lesson += f'{lesson[2].strftime("%H:%M")}     {lesson[1]}    {lesson[3]} ₽\n'
                 count_rubles += int(lesson[3])
-
+            
             await message.answer(f'{schedule_message}{schedule_lesson}\n💵 <b>Стоимость дня:</b> {count_rubles} ₽')
         else:
             await message.answer(f'🎉 На {weekday_name} ({target_date.strftime("%d.%m.%y")}) уроков нет.')
