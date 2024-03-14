@@ -1,5 +1,5 @@
 from aiogram.utils import executor
-from bot.loader import on_startup, bot
+from bot.loader import on_startup
 from bot.handlers import dp
 
 
