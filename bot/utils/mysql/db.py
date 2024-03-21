@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 loop = asyncio.get_event_loop()
-async def connection(loop):
+async def connection(loop, start=False):
     try:
         # global conn
         conn = await aiomysql.connect(
@@ -18,7 +18,9 @@ async def connection(loop):
             charset='utf8mb4',
             autocommit=True
         )
-        # print('Connect to MYSQL DB succesfull!')
+        if start:
+            print('Connect to MYSQL DB succesfull!')
+            conn.close()
         return conn
     except Exception as er:
         print('Error in connection to MYSQL DB: ', er)
@@ -474,3 +476,10 @@ async def get_lessons_current_date_and_time(current_datetime):
             return lessons_info
         else:
             return False
+        
+
+async def change_lesson_status(lesson_id, new_status):
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("UPDATE `lessons` SET `status` = %s WHERE id = %s", (new_status, lesson_id))
+        await con.commit()

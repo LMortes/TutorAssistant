@@ -18,7 +18,7 @@ def run_periodic_check_lesson_current_time_wrapper():
 async def on_startup(_):
     print('Bot started')
     loop = asyncio.get_event_loop()
-    await db.connection(loop)
+    await db.connection(loop, start=True)
     asyncio.create_task(run_periodic_check_lesson_current_time(bot))
     cron = crontab('* * * * *', func=run_periodic_check_lesson_current_time_wrapper())
     # cron.start()

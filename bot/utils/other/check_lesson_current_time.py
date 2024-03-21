@@ -2,7 +2,7 @@ import asyncio
 import datetime
 from aiogram.utils.exceptions import RetryAfter
 from bot.utils.mysql import db
-
+from bot.keyboards import inline as ikb
 
 async def send_message_to_teacher_at_current_time(bot, lesson_info):
     lesson_info_message = ''
@@ -14,7 +14,8 @@ async def send_message_to_teacher_at_current_time(bot, lesson_info):
     lesson_info_message = f'Начался урок\n\nУченик: {lesson_info[6]}\nКласс: {lesson_info[8]}\nПредмет: {lesson_info[7]}\nПлатформа: {lesson_info[10]}{platform_nick_message}\nЦель занятий: {lesson_info[9]}\nСтоимость: {lesson_info[1]}'
 
     try:  # Пробуем отправить сообщение репетитору
-        await bot.send_message(lesson_info[3], text=lesson_info_message, reply_markup=None)
+        await db.change_lesson_status(lesson_id=lesson_info[0], new_status=1) # При поступлении сообщения репетитору, статус урока сменяется на "1 - Идет в данный момент"
+        await bot.send_message(lesson_info[3], text=lesson_info_message, reply_markup=await ikb.setup_current_lesson(lesson_info[0]))
     except RetryAfter as e:  # обрабатываем ошибку слишком частой отправки
         await asyncio.sleep(e.timeout)
         return await send_message_to_teacher_at_current_time(lesson_info)

@@ -191,3 +191,15 @@ async def change_student_info(student_id):
     return change_student_info_ikb
 
 
+async def setup_current_lesson(lesson_id, is_payed_lesson=False):
+    setup_cur_lesson_ikb = InlineKeyboardMarkup()
+
+    success_lesson = InlineKeyboardButton(text="✅ Проведен", callback_data=f'setup_current_lesson_success_{lesson_id}:{is_payed_lesson}')
+    denied_lesson = InlineKeyboardButton(text='❌ Отменен', callback_data=f'setup_current_lesson_denied_{lesson_id}:{is_payed_lesson}')
+    payed_lesson = InlineKeyboardButton(text=f'💰 Оплачен? {"Нет" if is_payed_lesson == False else "Да"}', callback_data=f'setup_current_lesson_payed_{lesson_id}:{is_payed_lesson}')
+    change_date_lesson = InlineKeyboardButton(text='♻️ Перенести', callback_data=f'setup_current_lesson_change_date_{lesson_id}')
+
+    setup_cur_lesson_ikb.add(success_lesson, denied_lesson, payed_lesson)
+    setup_cur_lesson_ikb.add(change_date_lesson)
+
+    return setup_cur_lesson_ikb
