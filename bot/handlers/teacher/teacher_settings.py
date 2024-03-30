@@ -26,6 +26,21 @@ from bot.utils.other.parse_registration_date import parse_registration_date
 #     4.2) Все поля которые можно автозаполнить
 
 
-
+@dp.message_handler(Text('⚙️ Настройки'))
 async def teacher_settings_handler(message: types.Message):
-    pass
+    teacher_tg_id = message.from_user.id
+    await message.answer('⚙️ Настройки', reply_markup=await ikb.teacher_settings(teacher_tg_id))
+
+
+@dp.callback_query_handler(lambda callback: callback.data.startswith('teacher_settings_'))
+async def teacher_settings_callback(callback: types.CallbackQuery):
+    message_callback = callback.message[17:]
+
+    if message_callback == 'timezone':
+        pass
+    elif message_callback == 'notifications':
+        await callback.message.edit_reply_markup(reply_markup=await ikb.teacher_settings_notifications())
+    elif message_callback == 'nalog':
+        pass
+    elif message_callback == 'auto_zapoln':
+        pass

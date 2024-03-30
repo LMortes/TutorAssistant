@@ -30,8 +30,8 @@ async def generate_teacher_profile(teacher_info):
     # 3 - Перенесен
 
     parse_date_info = await parse_registration_date(registration_date)
-    success_lessons = await db.get_count_lessons_for_teacher(id, status=1)
-    canceled_lessons = await db.get_count_lessons_for_teacher(id, status=2)
+    success_lessons = await db.get_count_lessons_for_teacher(id, status=2)
+    canceled_lessons = await db.get_count_lessons_for_teacher(id, status=4)
     redate_lessons = await db.get_count_lessons_for_teacher(id, status=3)
     profile_text += f'🟣 {name}[{user_id}]\n' \
                     f'✍️ Предмет: {subject}\n' \

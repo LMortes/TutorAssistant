@@ -12,15 +12,20 @@ from bot.utils.mysql import db
 ################ Тестовая функция. Удалить!
 @dp.message_handler(commands=['lesson'])
 async def test_current_lesson_handler(message: types.Message):
-    lesson_info = (493, 1000, datetime.datetime(2024, 3, 14, 22, 59), 812267139, 'Свиридов Евгений Сергеевич', 4115, 'Катя', 'Математика', 8, 'Успеваемость', 'Discord', 'karga')
+    lesson_info = (493, 1000, datetime.datetime(2024, 3, 14, 22, 59), 812267139, 'Свиридов Евгений Сергеевич', 4115, 'Катя', 'Математика', 8, 'Успеваемость', 'Discord', 'karga', 0)
 
-    lesson_info_message = ''
+    lesson_info_message = f'{"Начался урок - Временный ⚠️" if lesson_info[12] == 3 else "Начался урок"}\n\n'
 
     # Форматируем вывод ника на платформе, если поступило не None
     platform_nick = " - " + lesson_info[11]
-    platform_nick_message = f'{"" if lesson_info[11] == None else platform_nick}'
+    platform_nick_message = f'{"" if lesson_info[11] is None else platform_nick}'
 
-    lesson_info_message = f'Начался урок\n\nУченик: {lesson_info[6]}\nКласс: {lesson_info[8]}\nПредмет: {lesson_info[7]}\nПлатформа: {lesson_info[10]}{platform_nick_message}\nЦель занятий: {lesson_info[9]}\nСтоимость: {lesson_info[1]}'
+    lesson_info_message +=  f'Ученик: {lesson_info[6]}\n' \
+                            f'Класс: {lesson_info[8]}\n' \
+                            f'Предмет: {lesson_info[7]}\n' \
+                            f'Платформа: {lesson_info[10]}{platform_nick_message}\n' \
+                            f'Цель занятий: {lesson_info[9]}\n' \
+                            f'Стоимость: {lesson_info[1]}'
     await bot.send_message(lesson_info[3], text=lesson_info_message, reply_markup=await ikb.setup_current_lesson(lesson_info[0]))
 
 @dp.callback_query_handler(lambda callback: callback.data.startswith('setup_current_lesson_'))

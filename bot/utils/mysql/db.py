@@ -467,7 +467,8 @@ async def get_lessons_current_date_and_time(current_datetime):
     async with con.cursor() as cur:
         await cur.execute("SELECT l.id AS lesson_id, l.price AS lesson_price, l.lesson_date, "
                           "t.user_id AS teacher_tg_id, t.name AS teacher_name, "
-                          "s.user_id AS student_tg_id, s.name AS student_name, s.subject AS student_subject, s.class AS student_class, s.purpose AS student_purpose, s.platform AS student_platform, s.platform_nick AS student_p_nick "  
+                          "s.user_id AS student_tg_id, s.name AS student_name, s.subject AS student_subject, s.class AS student_class, s.purpose AS student_purpose, s.platform AS student_platform, s.platform_nick AS student_p_nick, "
+                          "l.status AS lesson_status "  
                           "FROM lessons AS l JOIN teachers AS t ON l.teacher_id = t.id JOIN students AS s ON l.student_id = s.id "
                           "WHERE l.lesson_date = %s AND l.status <> 5", current_datetime)
         await con.commit()
