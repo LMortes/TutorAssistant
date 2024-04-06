@@ -215,3 +215,9 @@ async def teacher_settings(teacher_tg_id):
     teacher_settings_ikb.add(timezone, notifications, nalog, auto_zapoln)
 
     return teacher_settings_ikb
+
+
+# async def teacher_settings_notifications(notif_status):
+#     settings_notifications_ikb = InlineKeyboardMarkup(row_width=2)
+
+#     on_off_button_notifications = InlineKeyboardButton(text='')

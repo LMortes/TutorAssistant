@@ -3,7 +3,6 @@ import locale
 
 from aiogram import types
 from aiogram.dispatcher.filters import Text
-
 from bot.bin.russian_weekdays import russian_weekday
 from bot.keyboards import inline as ikb
 from bot.loader import dp, bot
@@ -35,10 +34,12 @@ async def teacher_settings_handler(message: types.Message):
 @dp.callback_query_handler(lambda callback: callback.data.startswith('teacher_settings_'))
 async def teacher_settings_callback(callback: types.CallbackQuery):
     message_callback = callback.message[17:]
-
+    teacher_tg_id = callback.message.from_user.id
+    settings_info = await db.get_teacher_settings_info(teacher_tg_id)
     if message_callback == 'timezone':
         pass
     elif message_callback == 'notifications':
+
         await callback.message.edit_reply_markup(reply_markup=await ikb.teacher_settings_notifications())
     elif message_callback == 'nalog':
         pass

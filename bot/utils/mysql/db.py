@@ -477,10 +477,23 @@ async def get_lessons_current_date_and_time(current_datetime):
             return lessons_info
         else:
             return False
-        
+
 
 async def change_lesson_status(lesson_id, new_status):
     con = await connection(loop)
     async with con.cursor() as cur:
         await cur.execute("UPDATE `lessons` SET `status` = %s WHERE id = %s", (new_status, lesson_id))
         await con.commit()
+
+
+async def get_teacher_settings_info(teacher_tg_id):
+    con = await connection(loop)
+    async with con.cursor() as cur:
+        await cur.execute("SELECT st_timezone, st_notif, st_nalog, st_autozapoln FROM teachers WHERE user_id = %s", teacher_tg_id)
+        await con.commit()
+
+        if cur.rowcount > 0:
+            settings_info = await cur.fetchall()
+            return settings_info
+        else:
+            return False
